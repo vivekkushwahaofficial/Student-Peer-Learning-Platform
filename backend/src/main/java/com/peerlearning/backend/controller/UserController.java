@@ -1,21 +1,21 @@
 package com.peerlearning.backend.controller;
 
+
+import com.peerlearning.backend.entity.User;
+import com.peerlearning.backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import com.peerlearning.backend.dto.UserDTO;
-import com.peerlearning.backend.entity.User;
-import com.peerlearning.backend.service.UserService;
-
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api/users")
 public class UserController {
 
     @Autowired
     private UserService userService;
 
-    @PostMapping("/register")
-    public User register(@RequestBody UserDTO dto) {
-        return userService.registerUser(dto);
+    @GetMapping("/profile")
+    public User getUserProfile(@RequestParam String email){
+        return userService.getUserByEmail(email);
     }
+
 }

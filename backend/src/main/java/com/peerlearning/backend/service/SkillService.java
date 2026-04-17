@@ -1,7 +1,10 @@
 package com.peerlearning.backend.service;
 
+import com.peerlearning.backend.dto.LoginDTO;
 import com.peerlearning.backend.entity.Skill;
+import com.peerlearning.backend.entity.User;
 import com.peerlearning.backend.repository.SkillRepository;
+import com.peerlearning.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
