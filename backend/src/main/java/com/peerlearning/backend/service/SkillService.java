@@ -27,4 +27,23 @@ public class SkillService {
 
         return skillRepository.save(skill);
     }
+
+    // Get all available skills
+    public java.util.List<Skill> getAllSkills() {
+        return skillRepository.findAll();
+    }
+
+    // Get skill by ID
+    public Skill getSkillById(Long id) {
+        return skillRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Skill not found"));
+    }
+
+    // Delete skill by ID
+    public void deleteSkill(Long id) {
+        if (!skillRepository.existsById(id)) {
+            throw new RuntimeException("Skill not found");
+        }
+        skillRepository.deleteById(id);
+    }
 }

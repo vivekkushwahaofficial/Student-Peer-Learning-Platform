@@ -1,50 +1,52 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  LayoutDashboard, 
-  PlusCircle, 
-  MessageSquare, 
-  Search, 
-  Star, 
-  Code, 
+import {
+  LayoutDashboard,
+  PlusCircle,
+  MessageSquare,
+  Search,
+  Star,
+  Code,
   ChevronRight,
   Bell,
   CheckCircle2,
   Users
 } from 'lucide-react';
+import { getUserProfile } from '../services/api.js';
 
 /**
- * MOCK API SERVICE
- * Consolidated here to fix environment resolution errors.
- * In your local VS Code, this code belongs in src/services/api.js
+ * REAL BACKEND CONNECTION
+ * Using actual API data for user profile
+ * Using mock data for requests (no backend endpoint yet)
  */
-const ApiService = {
+const MockApiService = {
   fetchRequests: async () => {
-    // This simulates a call to your future Spring Boot backend
+    // TODO: Create backend Request entity and controller
+    // Using mock data for now (will connect when available)
     return [
-      { 
-        id: 1, 
-        title: "DBMS Normalization HELP", 
-        user: "Kumar", 
-        time: "10 min ago", 
-        tags: ["#DBMS", "#Normal"], 
+      {
+        id: 1,
+        title: "DBMS Normalization HELP",
+        user: "Kumar",
+        time: "10 min ago",
+        tags: ["#DBMS", "#Normal"],
         priority: "Critical",
         description: "Need help with BCNF and 3NF normalization. Stuck on a complex relational table involving transitive dependencies."
       },
-      { 
-        id: 2, 
-        title: "React State Management Bug", 
-        user: "Ananya", 
-        time: "25 min ago", 
-        tags: ["#React", "#Hooks"], 
+      {
+        id: 2,
+        title: "React State Management Bug",
+        user: "Ananya",
+        time: "25 min ago",
+        tags: ["#React", "#Hooks"],
         priority: "High",
         description: "Unexpected re-renders when updating nested state objects in a multi-step form."
       },
-      { 
-        id: 3, 
-        title: "Java Multi-threading Logic", 
-        user: "Vivek", 
-        time: "1 hr ago", 
-        tags: ["#Java", "#Threads"], 
+      {
+        id: 3,
+        title: "Java Multi-threading Logic",
+        user: "Vivek",
+        time: "1 hr ago",
+        tags: ["#Java", "#Threads"],
         priority: "Medium",
         description: "Clarification needed on synchronized blocks vs reentrant locks for a shared resource manager."
       },
@@ -71,11 +73,41 @@ const Dashboard = ({ onSelectChat }) => {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('hub');
+  const [userProfile, setUserProfile] = useState(null);
+  const [profileLoading, setProfileLoading] = useState(true);
+  const [profileError, setProfileError] = useState(null);
 
+  // Load real user profile from backend
+  useEffect(() => {
+    const loadUserProfile = async () => {
+      try {
+        const storedUser = localStorage.getItem("user");
+        if (storedUser) {
+          const user = JSON.parse(storedUser);
+          // Fetch fresh data from backend using email
+          const profileData = await getUserProfile(user.email);
+          setUserProfile(profileData);
+        }
+      } catch (err) {
+        console.error("Failed to load user profile:", err);
+        // Fallback to localStorage data if backend fails
+        const storedUser = localStorage.getItem("user");
+        if (storedUser) {
+          setUserProfile(JSON.parse(storedUser));
+        }
+        setProfileError("Using cached profile data");
+      } finally {
+        setProfileLoading(false);
+      }
+    };
+    loadUserProfile();
+  }, []);
+
+  // Load community requests (mock data)
   useEffect(() => {
     const loadRequests = async () => {
       try {
-        const data = await ApiService.fetchRequests();
+        const data = await MockApiService.fetchRequests();
         setRequests(data);
       } catch (err) {
         console.error("Failed to load requests");
@@ -85,6 +117,13 @@ const Dashboard = ({ onSelectChat }) => {
     };
     loadRequests();
   }, []);
+
+  // Fallback profile if loading fails
+  const profile = userProfile || {
+    name: "Guest User",
+    college: "Your College",
+    course: "Your Course"
+  };
 
   return (
     <div className="flex min-h-screen bg-[#F8FAFC] text-slate-900 font-sans">
@@ -101,14 +140,14 @@ const Dashboard = ({ onSelectChat }) => {
         </div>
 
         <nav className="flex flex-col gap-2 flex-1">
-          <button 
+          <button
             onClick={() => setActiveTab('hub')}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${activeTab === 'hub' ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-100' : 'text-slate-500 hover:bg-slate-100'}`}
           >
             <LayoutDashboard size={20} />
             <span className="font-medium">Community Hub</span>
           </button>
-          <button 
+          <button
             onClick={() => setActiveTab('requests')}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${activeTab === 'requests' ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-100' : 'text-slate-500 hover:bg-slate-100'}`}
           >
@@ -117,14 +156,15 @@ const Dashboard = ({ onSelectChat }) => {
           </button>
         </nav>
 
+        {/* REAL BACKEND DATA - User Profile Card */}
         <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center border-2 border-white shadow-sm overflow-hidden">
-               <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Vivek" alt="Avatar" />
+              <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${profile.name || 'user'}`} alt="Avatar" />
             </div>
             <div className="overflow-hidden">
-              <p className="font-bold text-sm truncate">Vivek Kumar</p>
-              <p className="text-[10px] text-slate-400">3rd Yr, OIST</p>
+              <p className="font-bold text-sm truncate">{profileLoading ? "Loading..." : profile.name}</p>
+              <p className="text-[10px] text-slate-400">{profile.course}, {profile.college}</p>
             </div>
           </div>
         </div>
@@ -137,7 +177,7 @@ const Dashboard = ({ onSelectChat }) => {
             <h2 className="text-2xl font-bold text-slate-900">
               {activeTab === 'hub' ? 'Live Community Requests' : 'Post Your Query'}
             </h2>
-            <p className="text-slate-500 text-sm">Welcome back to PeerNexus, Vivek.</p>
+            <p className="text-slate-500 text-sm">Welcome back to PeerNexus, {profile.name.split(' ')[0]}.</p>
           </div>
           <div className="flex gap-4">
             <button className="p-2 bg-white border border-slate-200 rounded-lg text-slate-400 hover:text-indigo-600 transition-colors">
@@ -185,7 +225,7 @@ const Dashboard = ({ onSelectChat }) => {
                         </div>
                         <Badge variant={req.priority === 'Critical' ? 'critical' : 'blue'}>{req.priority}</Badge>
                       </div>
-                      
+
                       <p className="text-sm text-slate-600 mb-5 leading-relaxed">
                         {req.description}
                       </p>
@@ -194,7 +234,7 @@ const Dashboard = ({ onSelectChat }) => {
                         <div className="flex gap-2">
                           {req.tags.map(tag => <Badge key={tag}>{tag}</Badge>)}
                         </div>
-                        <button 
+                        <button
                           onClick={onSelectChat}
                           className="flex items-center gap-2 px-5 py-2.5 bg-indigo-600 text-white rounded-xl text-xs font-bold shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition-all active:scale-95"
                         >
@@ -243,22 +283,22 @@ const Dashboard = ({ onSelectChat }) => {
           </div>
         ) : (
           <div className="max-w-3xl mx-auto bg-white p-8 rounded-2xl border border-slate-200 shadow-sm animate-in fade-in slide-in-from-bottom-4 duration-500">
-             <div className="space-y-6">
-                <div>
-                  <label className="text-xs font-bold text-slate-400 uppercase mb-2 block">Request Title</label>
-                  <input className="w-full px-4 py-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-100 bg-slate-50/50" placeholder="e.g. Help with BCNF Decomposition" />
-                </div>
-                <div>
-                  <label className="text-xs font-bold text-slate-400 uppercase mb-2 block">Problem Description</label>
-                  <textarea rows={5} className="w-full px-4 py-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-100 bg-slate-50/50" placeholder="Describe the error or concept you are stuck with..." />
-                </div>
-                <button 
-                  onClick={() => setActiveTab('hub')}
-                  className="w-full py-4 bg-indigo-600 text-white font-bold rounded-xl shadow-xl shadow-indigo-100 hover:bg-indigo-700 transition-all flex items-center justify-center gap-2"
-                >
-                  Post to Community <CheckCircle2 size={18} />
-                </button>
-             </div>
+            <div className="space-y-6">
+              <div>
+                <label className="text-xs font-bold text-slate-400 uppercase mb-2 block">Request Title</label>
+                <input className="w-full px-4 py-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-100 bg-slate-50/50" placeholder="e.g. Help with BCNF Decomposition" />
+              </div>
+              <div>
+                <label className="text-xs font-bold text-slate-400 uppercase mb-2 block">Problem Description</label>
+                <textarea rows={5} className="w-full px-4 py-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-100 bg-slate-50/50" placeholder="Describe the error or concept you are stuck with..." />
+              </div>
+              <button
+                onClick={() => setActiveTab('hub')}
+                className="w-full py-4 bg-indigo-600 text-white font-bold rounded-xl shadow-xl shadow-indigo-100 hover:bg-indigo-700 transition-all flex items-center justify-center gap-2"
+              >
+                Post to Community <CheckCircle2 size={18} />
+              </button>
+            </div>
           </div>
         )}
       </main>

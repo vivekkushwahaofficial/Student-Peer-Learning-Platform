@@ -1,9 +1,15 @@
 package com.peerlearning.backend.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "skills")
+@Getter
+@Setter
+@NoArgsConstructor
 public class Skill {
 
     @Id
@@ -12,7 +18,7 @@ public class Skill {
 
     private String name;
 
-    public void setName(String name) {
-
+    public Skill(String name) {
+        this.name = name;
     }
 }

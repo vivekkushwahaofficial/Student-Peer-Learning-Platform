@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { ArrowRight, Mail, Lock } from "lucide-react";
 
 const LoginPage = () => {
 
@@ -55,47 +56,60 @@ const LoginPage = () => {
   };
 
   return (
-    <div
-      style={{ textAlign: "center", marginTop: "100px" }}
-      // Tailwind added: w-full (full width container), max-w-md (safe form width cap), mx-auto (center horizontally), px-4 (mobile side padding), text-slate-900 (readable text color), font-sans (consistent typography)
-      className="w-full max-w-md mx-auto px-4 text-slate-900 font-sans"
-    >
+    <div className="min-h-screen bg-[#eff3f8] px-4 py-10 sm:px-6">
+      <div className="mx-auto w-full max-w-md rounded-3xl border border-slate-200 bg-white p-7 shadow-[0_14px_40px_rgba(15,23,42,0.08)] sm:p-8">
+        <div className="text-center">
+          <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">Login</h1>
+          <p className="mt-2 text-sm text-slate-500">Sign in to continue to PeerNexus</p>
+        </div>
 
-      {/* Tailwind added: text-2xl (larger heading), font-bold (strong title weight), mb-6 (spacing below heading) */}
-      <h2 className="text-2xl font-bold mb-6">Login</h2>
+        <div className="mt-7 space-y-4">
+          <label className="block">
+            <span className="mb-2 block text-sm font-semibold text-slate-700">Email</span>
+            <div className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 transition focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-100">
+              <Mail className="h-4 w-4 text-slate-400" />
+              <input
+                type="email"
+                placeholder="Enter Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full bg-transparent text-sm outline-none placeholder:text-slate-400"
+              />
+            </div>
+          </label>
 
-      <input
-        type="email"
-        placeholder="Enter Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        // Tailwind added: w-full (input fills container), rounded-md (soft corners), border border-slate-300 (subtle input boundary), px-3 py-2 (comfortable input padding), focus:outline-none (remove default outline), focus:ring-2 focus:ring-indigo-200 (accessible focus state)
-        className="w-full rounded-md border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-200"
-      />
+          <label className="block">
+            <span className="mb-2 block text-sm font-semibold text-slate-700">Password</span>
+            <div className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 transition focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-100">
+              <Lock className="h-4 w-4 text-slate-400" />
+              <input
+                type="password"
+                placeholder="Enter Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full bg-transparent text-sm outline-none placeholder:text-slate-400"
+              />
+            </div>
+          </label>
+        </div>
 
-      <br /><br />
+        <div className="mt-3 text-right">
+          <a href="#" className="text-sm font-medium text-blue-700 hover:text-blue-800">Forgot password?</a>
+        </div>
 
-      <input
-        type="password"
-        placeholder="Enter Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        // Tailwind added: w-full (input fills container), rounded-md (soft corners), border border-slate-300 (subtle input boundary), px-3 py-2 (comfortable input padding), focus:outline-none (remove default outline), focus:ring-2 focus:ring-indigo-200 (accessible focus state)
-        className="w-full rounded-md border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-200"
-      />
+        <button
+          onClick={handleLogin}
+          className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-base font-semibold text-white shadow-md shadow-blue-200 transition hover:bg-blue-700"
+        >
+          Sign In
+          <ArrowRight className="h-4 w-4" />
+        </button>
 
-      <br /><br />
-
-      <button
-        onClick={handleLogin}
-        // Tailwind added: bg-indigo-600 (primary button color), text-white (contrast), px-5 py-2.5 (button size), rounded-md (shape), font-medium (legibility), hover:bg-indigo-700 (clear hover feedback), transition-colors (smooth color transition)
-        className="bg-indigo-600 text-white px-5 py-2.5 rounded-md font-medium hover:bg-indigo-700 transition-colors"
-      >
-        Login
-      </button>
-
+        <p className="mt-6 text-center text-sm text-slate-600">
+          Don't have an account? <a href="/register" className="font-semibold text-blue-700 hover:text-blue-800">Sign Up</a>
+        </p>
+      </div>
     </div>
-
   );
 };
 
